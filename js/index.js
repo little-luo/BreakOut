@@ -24,14 +24,6 @@ const SIZE = {
   },
 };
 
-// const SCREEN_POSITION = {
-//   centerLine: canvas.width / 2,
-//   top:0,
-//   right:canvas.width,
-//   bottom:canvas.height,
-//   left:0,
-// };
-
 class Paddle {
   constructor(x, y, width, height) {
     this.x = x;
@@ -71,19 +63,39 @@ class Brick {
     ctx.fillStyle = this.color;
     // ctx.strokeStyle = COLOR.stroke;
     // ctx.lineWidth = 1;
-    for (let i = 0; i < rows; i++) {
-      for (let j = 0; j < cols; j++) {
-        let x = 0 + j * (gap + this.width);
-        let y = 0 + i * (gap + this.height);
-        ctx.fillRect(x, y, this.width, this.height);
-        // 繪製邊框
-        // ctx.strokeRect(x + 0.5, y + 0.5, this.width - 1, this.height - 1);
-      }
-    }
+    // for (let i = 0; i < rows; i++) {
+    //   for (let j = 0; j < cols; j++) {
+    //     let x = 0 + j * (gap + this.width);
+    //     let y = 0 + i * (gap + this.height);
+    //     ctx.fillRect(x, y, this.width, this.height);
+    //     // 繪製邊框
+    //     // ctx.strokeRect(x + 0.5, y + 0.5, this.width - 1, this.height - 1);
+    //   }
+    // }
+    ctx.fillRect(this.x, this.y, this.width, this.height);
     ctx.closePath();
   }
 }
-const brick = new Brick(0, 0, SIZE.brick.width, SIZE.brick.height);
+let allBricks = [];
+function createAllBricks() {
+  for (let i = 0; i < rows; i++) {
+    let temp = [];
+    for (let j = 0; j < cols; j++) {
+      let x = 0 + j * (gap + SIZE.brick.width);
+      let y = 0 + i * (gap + SIZE.brick.height);
+      const brick = new Brick(x, y, SIZE.brick.width, SIZE.brick.height);
+      temp.push(brick);
+    }
+    allBricks.push(temp);
+    allBricks = allBricks.flat();
+  }
+}
+
+function displayAllBricks() {
+  for (let i = 0; i < rows * cols; i++) {
+    allBricks[i].draw();
+  }
+}
 
 class Ball {
   constructor(x, y, radius) {
@@ -166,7 +178,7 @@ function checkCollision() {
 
 function init() {
   paddle.draw();
-  brick.draw();
+  createAllBricks();
   ball.draw();
 }
 
@@ -181,7 +193,7 @@ function render() {
     checkCollision();
   }
   paddle.draw();
-  brick.draw();
+  displayAllBricks();
   ball.draw();
   const id = setTimeout(render, 30);
 }
