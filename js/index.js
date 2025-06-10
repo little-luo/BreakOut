@@ -114,7 +114,6 @@ window.addEventListener("keydown", function (e) {
   let keyDown = e.keyCode;
   if (keyDown === 37 || keyDown === 39) {
     gameStart = true;
-    console.log(gameStart);
     switch (keyDown) {
       case 37: {
         paddle.x -= 10;
@@ -138,6 +137,29 @@ function checkCollision() {
   }
   // paddle 與 球的碰撞偵測
   if (ball.y + ball.r >= paddle.y) {
+    if (ball.x >= paddle.x && ball.x <= paddle.x + paddle.w) {
+      ball.dirY *= -1;
+    }
+  }
+  // ball 與 邊界碰撞偵測
+  if (ball.x - ball.r <= 0) {
+    ball.x = ball.r;
+    ball.dirX *= -1;
+  }
+  // ball 與 邊界碰撞偵測
+  if (ball.x + ball.r >= canvas.width) {
+    ball.x = canvas.width - ball.r;
+    ball.dirX *= -1;
+  }
+  // ball 與 邊界碰撞偵測
+  if (ball.y >= canvas.height + 2 * ball.r) {
+    gameStart = false;
+    alert("結束遊戲");
+    window.location.reload();
+  }
+  // ball 與 邊界碰撞偵測
+  if (ball.y - ball.r <= 0) {
+    ball.y = ball.r;
     ball.dirY *= -1;
   }
 }
@@ -154,13 +176,13 @@ function init() {
 
 function render() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  paddle.draw();
-  brick.draw();
-  ball.draw();
   if (gameStart) {
     ball.move();
     checkCollision();
   }
-  const id = setTimeout(render, 50);
+  paddle.draw();
+  brick.draw();
+  ball.draw();
+  const id = setTimeout(render, 30);
 }
 render();
