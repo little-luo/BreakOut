@@ -12,6 +12,7 @@ const cols = 10;
 const rows = 5;
 const gap = 1;
 const radius = 5;
+let gameStart = false;
 const SIZE = {
   paddle: {
     width: 75,
@@ -42,8 +43,8 @@ class Paddle {
 
   draw() {
     ctx.beginPath();
-    ctx.fillRect(this.x, this.y, this.w, this.h);
     ctx.fillStyle = this.color;
+    ctx.fillRect(this.x, this.y, this.w, this.h);
     ctx.fill();
     ctx.closePath();
   }
@@ -90,6 +91,9 @@ class Ball {
     this.y = y;
     this.r = radius;
     this.color = COLOR.ball;
+    this.speed = 3;
+    this.dirX = Math.round(Math.random()) === 1 ? 1 : -1;
+    this.dirY = -1;
   }
   draw() {
     ctx.beginPath();
@@ -97,9 +101,46 @@ class Ball {
     ctx.fillStyle = this.color;
     ctx.fill();
   }
+
+  move() {
+    this.x += this.speed * this.dirX;
+    this.y += this.speed * this.dirY;
+  }
 }
 
 const ball = new Ball(paddle.x + paddle.w / 2, paddle.y - radius, radius);
+
+window.addEventListener("keydown", function (e) {
+  let keyDown = e.keyCode;
+  if (keyDown === 37 || keyDown === 39) {
+    gameStart = true;
+    console.log(gameStart);
+    switch (keyDown) {
+      case 37: {
+        paddle.x -= 10;
+        break;
+      }
+      case 39: {
+        paddle.x += 10;
+        break;
+      }
+    }
+  }
+});
+
+function checkCollision() {
+  // paddle 與 邊界的碰撞偵測
+  if (paddle.x + paddle.w >= canvas.width) {
+    paddle.x = canvas.width - paddle.w;
+  }
+  if (paddle.x <= 0) {
+    paddle.x = 0;
+  }
+  // paddle 與 球的碰撞偵測
+  if (ball.y + ball.r >= paddle.y) {
+    ball.dirY *= -1;
+  }
+}
 
 function init() {
   paddle.draw();
@@ -110,3 +151,16 @@ function init() {
 (function () {
   init();
 })();
+
+function render() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  paddle.draw();
+  brick.draw();
+  ball.draw();
+  if (gameStart) {
+    ball.move();
+    checkCollision();
+  }
+  const id = setTimeout(render, 50);
+}
+render();
