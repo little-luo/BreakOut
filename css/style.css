@@ -1,0 +1,17 @@
+body{
+    width: 100vw;
+    height: 100vh;
+    margin: 0px;
+}
+canvas{
+    border: 1px solid black;
+    width: 80%;
+    height: 90%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    margin: 5px auto auto;
+    display: block;
+}
