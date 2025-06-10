@@ -92,7 +92,7 @@ function createAllBricks() {
 }
 
 function displayAllBricks() {
-  for (let i = 0; i < rows * cols; i++) {
+  for (let i = 0; i < allBricks.length; i++) {
     allBricks[i].draw();
   }
 }
@@ -173,6 +173,20 @@ function checkCollision() {
   if (ball.y - ball.r <= 0) {
     ball.y = ball.r;
     ball.dirY *= -1;
+  }
+  // ball 與 所有磚塊碰撞偵測
+  for (let i = 0; i < allBricks.length; i++) {
+    if (ball.y <= allBricks[i].y + allBricks[i].height) {
+      if (
+        ball.x >= allBricks[i].x &&
+        ball.x <= allBricks[i].x + allBricks[i].width
+      ) {
+        allBricks.splice(i, 1);
+        // 印出磚塊的數量
+        // console.log(allBricks.length);
+        ball.dirY *= -1;
+      }
+    }
   }
 }
 
