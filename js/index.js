@@ -165,9 +165,12 @@ function checkCollision() {
   }
   // ball 與 邊界碰撞偵測
   if (ball.y >= canvas.height + 2 * ball.r) {
-    gameStart = false;
-    alert("結束遊戲");
-    window.location.reload();
+    // gameStart的值 為 true，迴圈第一次執行，呼叫 stopGame() 改變 gameStart的值 為 false。
+    // 接著由於gameStart的值 為 false，所以會結束 while 迴圈 ， 再次呼叫 stopGame() 結束遊戲
+    while (gameStart === true) {
+      stopGame();
+    }
+    stopGame();
   }
   // ball 與 邊界碰撞偵測
   if (ball.y - ball.r <= 0) {
@@ -190,6 +193,17 @@ function checkCollision() {
   }
 }
 
+function stopGame() {
+  // 第一次呼叫 stopGame() 的時候 gameStart 為 true，所以不會跳出結束遊戲彈窗，刷新頁面
+  // 而是僅改變 gameStart 的值 為 false。
+  // 第二次呼叫 stopGame() 的時候 gameStart 為 false，所以會跳出結束遊戲彈窗，刷新頁面
+  if (gameStart === false) {
+    alert("結束遊戲");
+    window.location.reload();
+  }
+  gameStart = false;
+}
+
 function init() {
   paddle.draw();
   createAllBricks();
@@ -209,6 +223,11 @@ function render() {
   paddle.draw();
   displayAllBricks();
   ball.draw();
+  // 當 allBricks的長度為 0 時，表示沒有任何磚塊物件，呼叫 stopGame()， 將 gameStart 的值 改為 false
+  // 在 30 毫秒 呼叫 setTimeout callBack function 也就是 render() 重新更新畫面，此時gameStart 已經是 false 且 allBricks 的長度仍然是 0 所以再次呼叫 stopGame() 結束遊戲
+  if (allBricks.length === 0) {
+    stopGame();
+  }
   const id = setTimeout(render, 30);
 }
 render();
