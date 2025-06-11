@@ -12,6 +12,7 @@ const cols = 10;
 const rows = 5;
 const gap = 1;
 const radius = 5;
+let score = 0;
 let gameStart = false;
 const SIZE = {
   paddle: {
@@ -149,7 +150,7 @@ function checkCollision() {
   }
   // paddle 與 球的碰撞偵測
   if (ball.y + ball.r >= paddle.y) {
-    if (ball.x >= paddle.x && ball.x <= paddle.x + paddle.w) {
+    if (ball.x >= paddle.x && ball.x <= paddle.x + paddle.w && ball.dirY > 0) {
       ball.dirY *= -1;
     }
   }
@@ -188,6 +189,7 @@ function checkCollision() {
         // 印出磚塊的數量
         // console.log(allBricks.length);
         ball.dirY *= -1;
+        displayScore((score += 10));
       }
     }
   }
@@ -204,10 +206,27 @@ function stopGame() {
   gameStart = false;
 }
 
+function displayScore(score) {
+  let span_el = document.getElementsByTagName("span")[0];
+  if (span_el) {
+    span_el.remove();
+  }
+  span_el = document.createElement("span");
+  span_el.style.position = "absolute";
+  span_el.style.right = "1em";
+  span_el.style.top = "0.5em";
+  span_el.style.fontSize = "1.5em";
+  span_el.textContent = `Score:${score}`;
+  document
+    .getElementsByTagName("body")[0]
+    .insertAdjacentHTML("afterbegin", span_el.outerHTML);
+}
+
 function init() {
   paddle.draw();
   createAllBricks();
   ball.draw();
+  displayScore(0);
 }
 
 (function () {
