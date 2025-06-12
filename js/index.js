@@ -8,8 +8,8 @@ const COLOR = {
   ball: "green",
 };
 
-const cols = 10;
-const rows = 5;
+const cols = 2;
+const rows = 1;
 const gap = 1;
 const radius = 5;
 let score = 0;
@@ -123,7 +123,8 @@ class Ball {
 
 const ball = new Ball(paddle.x + paddle.w / 2, paddle.y - radius, radius);
 
-window.addEventListener("keydown", function (e) {
+window.addEventListener("keydown", handleKeyDown);
+function handleKeyDown(e) {
   let keyDown = e.keyCode;
   if (keyDown === 37 || keyDown === 39) {
     gameStart = true;
@@ -138,7 +139,7 @@ window.addEventListener("keydown", function (e) {
       }
     }
   }
-});
+}
 
 const sound = {
   playBrick() {
@@ -220,6 +221,7 @@ function checkCollision() {
 }
 
 function stopGame() {
+  window.removeEventListener("keydown", handleKeyDown);
   // 第一次呼叫 stopGame() 的時候 gameStart 為 true，所以不會跳出結束遊戲彈窗，刷新頁面
   // 而是僅改變 gameStart 的值 為 false。
   // 第二次呼叫 stopGame() 的時候 gameStart 為 false，所以會跳出結束遊戲彈窗，刷新頁面
@@ -240,7 +242,7 @@ function displayScore(score) {
   }
   span_el = document.createElement("span");
   span_el.style.position = "absolute";
-  span_el.style.right = "1em";
+  span_el.style.right = "0.5em";
   span_el.style.top = "0.5em";
   span_el.style.fontSize = "1.5em";
   span_el.textContent = `Score:${score}`;
@@ -272,7 +274,11 @@ function render() {
   // 當 allBricks的長度為 0 時，表示沒有任何磚塊物件，呼叫 stopGame()， 將 gameStart 的值 改為 false
   // 在 30 毫秒 呼叫 setTimeout callBack function 也就是 render() 重新更新畫面，此時gameStart 已經是 false 且 allBricks 的長度仍然是 0 所以再次呼叫 stopGame() 結束遊戲
   if (allBricks.length === 0) {
+    while (gameStart === true) {
+      stopGame();
+    }
     stopGame();
+    return;
   }
   const id = setTimeout(render, 30);
 }
