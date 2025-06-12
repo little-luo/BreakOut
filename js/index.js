@@ -140,6 +140,25 @@ window.addEventListener("keydown", function (e) {
   }
 });
 
+const sound = {
+  playBrick() {
+    const brickSound = new Audio("./audio/brick.m4a");
+    brickSound.play();
+  },
+  playPaddle() {
+    const paddleSound = new Audio("./audio/paddle.m4a");
+    paddleSound.play();
+  },
+  playWall() {
+    const wallSound = new Audio("./audio/wall.m4a");
+    wallSound.play();
+  },
+  playGameOver() {
+    const gameOverSound = new Audio("./audio/game_over.mp3");
+    gameOverSound.play();
+  },
+};
+
 function checkCollision() {
   // paddle 與 邊界的碰撞偵測
   if (paddle.x + paddle.w >= canvas.width) {
@@ -152,17 +171,20 @@ function checkCollision() {
   if (ball.y + ball.r >= paddle.y) {
     if (ball.x >= paddle.x && ball.x <= paddle.x + paddle.w && ball.dirY > 0) {
       ball.dirY *= -1;
+      sound.playPaddle();
     }
   }
   // ball 與 邊界碰撞偵測
   if (ball.x - ball.r <= 0) {
     ball.x = ball.r;
     ball.dirX *= -1;
+    sound.playWall();
   }
   // ball 與 邊界碰撞偵測
   if (ball.x + ball.r >= canvas.width) {
     ball.x = canvas.width - ball.r;
     ball.dirX *= -1;
+    sound.playWall();
   }
   // ball 與 邊界碰撞偵測
   if (ball.y >= canvas.height + 2 * ball.r) {
@@ -177,6 +199,7 @@ function checkCollision() {
   if (ball.y - ball.r <= 0) {
     ball.y = ball.r;
     ball.dirY *= -1;
+    sound.playWall();
   }
   // ball 與 所有磚塊碰撞偵測
   for (let i = 0; i < allBricks.length; i++) {
@@ -190,6 +213,7 @@ function checkCollision() {
         // console.log(allBricks.length);
         ball.dirY *= -1;
         displayScore((score += 10));
+        sound.playBrick();
       }
     }
   }
@@ -200,8 +224,11 @@ function stopGame() {
   // 而是僅改變 gameStart 的值 為 false。
   // 第二次呼叫 stopGame() 的時候 gameStart 為 false，所以會跳出結束遊戲彈窗，刷新頁面
   if (gameStart === false) {
-    alert("結束遊戲");
-    window.location.reload();
+    sound.playGameOver();
+    setTimeout(function () {
+      alert("結束遊戲");
+      window.location.reload();
+    }, 800);
   }
   gameStart = false;
 }
