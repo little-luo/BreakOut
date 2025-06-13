@@ -8,8 +8,8 @@ const COLOR = {
   ball: "green",
 };
 
-const cols = 2;
-const rows = 1;
+const cols = 10;
+const rows = 3;
 const gap = 1;
 const radius = 5;
 let score = 0;
@@ -158,6 +158,10 @@ const sound = {
     const gameOverSound = new Audio("./audio/game_over.mp3");
     gameOverSound.play();
   },
+  playWinning() {
+    const winSound = new Audio("./audio/winning.mp3");
+    winSound.play();
+  },
 };
 
 function checkCollision() {
@@ -226,11 +230,18 @@ function stopGame() {
   // 而是僅改變 gameStart 的值 為 false。
   // 第二次呼叫 stopGame() 的時候 gameStart 為 false，所以會跳出結束遊戲彈窗，刷新頁面
   if (gameStart === false) {
-    sound.playGameOver();
+    let time = undefined;
+    if (allBricks.length === 0) {
+      time = 2000;
+      sound.playWinning();
+    } else {
+      time = 800;
+      sound.playGameOver();
+    }
     setTimeout(function () {
       alert("結束遊戲");
       window.location.reload();
-    }, 800);
+    }, time);
   }
   gameStart = false;
 }
