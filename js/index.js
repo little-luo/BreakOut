@@ -78,6 +78,7 @@ class Brick {
   }
 }
 let allBricks = [];
+// 建立所有的磚塊物件
 function createAllBricks() {
   for (let i = 0; i < rows; i++) {
     let temp = [];
@@ -92,6 +93,7 @@ function createAllBricks() {
   }
 }
 
+// 顯示所有的磚塊物件
 function displayAllBricks() {
   for (let i = 0; i < allBricks.length; i++) {
     allBricks[i].draw();
@@ -123,6 +125,7 @@ class Ball {
 
 const ball = new Ball(paddle.x + paddle.w / 2, paddle.y - radius, radius);
 
+// keydawn 事件監聽
 window.addEventListener("keydown", handleKeyDown);
 function handleKeyDown(e) {
   let keyDown = e.keyCode;
@@ -141,6 +144,7 @@ function handleKeyDown(e) {
   }
 }
 
+// 音效
 const sound = {
   playBrick() {
     const brickSound = new Audio("./audio/brick.m4a");
@@ -228,7 +232,7 @@ function stopGame() {
   window.removeEventListener("keydown", handleKeyDown);
   // 第一次呼叫 stopGame() 的時候 gameStart 為 true，所以不會跳出結束遊戲彈窗，刷新頁面
   // 而是僅改變 gameStart 的值 為 false。
-  // 第二次呼叫 stopGame() 的時候 gameStart 為 false，所以會跳出結束遊戲彈窗，刷新頁面
+  // 第二次呼叫 stopGame() 的時候 gameStart 為 false，所以會播放音效跳出結束遊戲彈窗，刷新頁面
   if (gameStart === false) {
     let time = undefined;
     if (allBricks.length === 0) {
@@ -238,6 +242,7 @@ function stopGame() {
       time = 800;
       sound.playGameOver();
     }
+    // 撥放完音效，跳出結束遊戲彈窗，刷新頁面
     setTimeout(function () {
       alert("結束遊戲");
       window.location.reload();
@@ -246,11 +251,14 @@ function stopGame() {
   gameStart = false;
 }
 
+// 顯示分數
 function displayScore(score) {
+  // 移除舊的 span_el
   let span_el = document.getElementsByTagName("span")[0];
   if (span_el) {
     span_el.remove();
   }
+  // 新增新的 span_el
   span_el = document.createElement("span");
   span_el.style.position = "absolute";
   span_el.style.right = "0.5em";
@@ -262,6 +270,7 @@ function displayScore(score) {
     .insertAdjacentHTML("afterbegin", span_el.outerHTML);
 }
 
+// 第一次執行初始化
 function init() {
   paddle.draw();
   createAllBricks();
@@ -269,10 +278,12 @@ function init() {
   displayScore(0);
 }
 
+// IIFE立即呼叫函式
 (function () {
   init();
 })();
 
+// 渲染畫面
 function render() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   if (gameStart) {
@@ -282,8 +293,8 @@ function render() {
   paddle.draw();
   displayAllBricks();
   ball.draw();
-  // 當 allBricks的長度為 0 時，表示沒有任何磚塊物件，呼叫 stopGame()， 將 gameStart 的值 改為 false
-  // 在 30 毫秒 呼叫 setTimeout callBack function 也就是 render() 重新更新畫面，此時gameStart 已經是 false 且 allBricks 的長度仍然是 0 所以再次呼叫 stopGame() 結束遊戲
+  // 當 allBricks的長度為 0 時，表示沒有任何磚塊物件，第一次執行while迴圈，呼叫 stopGame()， 將 gameStart 的值 改為 false
+  // 第二次執行while迴圈，由於gameStart 的值 已經改為 false，所以會結束while迴圈，再次呼叫stopGame()，結束遊戲
   if (allBricks.length === 0) {
     while (gameStart === true) {
       stopGame();
